@@ -97,7 +97,7 @@ if(! function_exists('response'))
 {
     function response($resourse) : string
     {
-        return __DIR__.'/../resourses/'.$resourse;
+        return __DIR__.'/../../resourses/'.$resourse;
         #return file_get_contents(__DIR__.'/../resourses/'.$resourse);
     };
 }
