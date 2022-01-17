@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Obtiene la conección a la base de datos y la asigna al simbolo $connection.
+ * Obtiene la conexión a la base de datos y la asigna al simbolo $connection.
  */
 def($connection, require __DIR__.'/connection.php');
 
@@ -78,25 +78,26 @@ def($routeFn, function($route, $controller) use ($connection, $request, $routePu
 });
 
 /**
+ * Permite saber si se ha encontrado un recurso o no.
+ */
+def($resource_found, false);
+
+/**
  * Permite definir las rutas que se usarán en el sistema.
  */
-def($routePrint, function($route, $controller) use ($routeFn)
+def($routePrint, function($route, $controller) use ($routeFn, &$resource_found)
 {
     //def($routeWithoutPoint, explode('.', $route));
     def($resultRouteFn, $routeFn($route, $controller));
-    
-
-    def($view_or_resource_not_found, 
-        iffn(fn()=> null !== $resultRouteFn,
-            function() use ($resultRouteFn)
-            {
-                if(!isset($_SESSION)){ session_start();}
-                $_SESSION['resource_found'] = true;
-                return $resultRouteFn;
-            }
-        )
+ 
+    return iffn(
+        fn()=> null !== $resultRouteFn && $resource_found === false,
+        function() use ($resultRouteFn, &$resource_found)
+        {
+            $resource_found = true;
+            return $resultRouteFn;
+        }
     );
-
     //printFunction($view_or_resource_not_found);
     #var_dump($routeFn($route, $controller));
 });
@@ -104,25 +105,16 @@ def($routePrint, function($route, $controller) use ($routeFn)
 /**
  * Es lo que se ejecuta por defecto si el recurso no fue encontrado.
  */
-def($resource_not_found, function($controller) use ($request)
+def($resource_not_found, function($controller) use ($request, &$resource_found)
 {
     //def($routeWithoutPoint, explode('.', $route));
     def($controllerMethod, explode('@', $controller));
-    printFunction(
-        iffn(function() use ($request)
-            {
-                if(!isset($_SESSION)){ session_start();}
 
-                return iffn(
-                    fn()=> isset($_SESSION['resource_found']) 
-                        || $_SESSION['resource_found'] !== true,
-                    fn()=>true,
-                );
-            },
-            fn()=> $request($controllerMethod[0], $controllerMethod[1], null, null)
-        )
+    return iffn(
+        fn()=> $resource_found === false,
+        fn()=> $request($controllerMethod[0], $controllerMethod[1], null, null)
+        //fn()=> 'Esto es un mensaje de error.'
     );
-    #var_dump($routeFn($route, $controller));
 });
 
 /**
