@@ -104,14 +104,14 @@ def($routePrint, function($route, $controller) use ($routeFn)
 /**
  * Es lo que se ejecuta por defecto si el recurso no fue encontrado.
  */
-def($resource_not_found, function($route, $controller) use ($routeFn)
+def($resource_not_found, function($controller) use ($request)
 {
     //def($routeWithoutPoint, explode('.', $route));
+    def($controllerMethod, explode('@', $controller));
     printFunction(
-        iffn(function()
+        iffn(function() use ($request)
             {
                 if(!isset($_SESSION)){ session_start();}
-                $_SESSION['resource_found'] = true;
 
                 return iffn(
                     fn()=> isset($_SESSION['resource_found']) 
@@ -119,7 +119,7 @@ def($resource_not_found, function($route, $controller) use ($routeFn)
                     fn()=>true,
                 );
             },
-            fn()=> $routeFn($route, $controller)
+            fn()=> $request($controllerMethod[0], $controllerMethod[1], null, null)
         )
     );
     #var_dump($routeFn($route, $controller));
