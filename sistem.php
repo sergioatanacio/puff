@@ -82,13 +82,48 @@ def($routeFn, function($route, $controller) use ($connection, $request, $routePu
  */
 def($routePrint, function($route, $controller) use ($routeFn)
 {
-    def($routeWithoutPoint, explode('.', $route));
+    //def($routeWithoutPoint, explode('.', $route));
+    def($resultRouteFn, $routeFn($route, $controller));
+    
 
-    printFunction($routeFn($routeWithoutPoint[0], $controller));
+    def($view_or_resource_not_found, 
+        iffn(fn()=> null !== $resultRouteFn,
+            function() use ($resultRouteFn)
+            {
+                if(!isset($_SESSION)){ session_start();}
+                $_SESSION['resource_found'] = true;
+                return $resultRouteFn;
+            }
+        )
+    );
+
+    //printFunction($view_or_resource_not_found);
     #var_dump($routeFn($route, $controller));
 });
 
+/**
+ * Es lo que se ejecuta por defecto si el recurso no fue encontrado.
+ */
+def($resource_not_found, function($route, $controller) use ($routeFn)
+{
+    //def($routeWithoutPoint, explode('.', $route));
+    printFunction(
+        iffn(function()
+            {
+                if(!isset($_SESSION)){ session_start();}
+                $_SESSION['resource_found'] = true;
 
+                return iffn(
+                    fn()=> isset($_SESSION['resource_found']) 
+                        || $_SESSION['resource_found'] !== true,
+                    fn()=>true,
+                );
+            },
+            fn()=> $routeFn($route, $controller)
+        )
+    );
+    #var_dump($routeFn($route, $controller));
+});
 
 /**
  * Se trae una ruta como si fuera un string, ese es el valor de retorno.
