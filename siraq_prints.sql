@@ -49,5 +49,14 @@ VALUES
 
 
 
+INSERT INTO `tags` 
+  (`id_tag`, `name_tag`, `description_tag`, `cover_tag`)
+VALUES
+  (1, 'Navideños', 'Todo sobre navidades', 'Link de imagen del tag.'),
+  (2, 'Parejas', 'Sobre todo viniles para poleras', 'Link de imagen del tag.'),
+  (3, 'Cumpleaños', 'Para niños', 'Link de imagen del tag.');
+
+
+
 
   
