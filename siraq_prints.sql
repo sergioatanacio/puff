@@ -59,4 +59,11 @@ VALUES
 
 
 
-  
+INSERT INTO `sheets` 
+  (`id_sheets`, `name_sheets`, `description_sheets`, `price`, `amount`, `image_sheets`)
+VALUES
+  (1, 'Mikey mouse', 'Muñeco de disney', '2', '200', 'Link de Mikey mouse'),
+  (2, 'Cobra Kai', 'Arbol insignia', '3', '30', 'Link de Cobra Kai'),
+  (3, 'Grut', 'De marvel', '5', '50', 'Link de Grut');
+
+
