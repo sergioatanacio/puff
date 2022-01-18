@@ -90,13 +90,15 @@ def($routePrint, function($route, $controller) use ($routeFn, &$resource_found)
     //def($routeWithoutPoint, explode('.', $route));
     def($resultRouteFn, $routeFn($route, $controller));
  
-    return iffn(
-        fn()=> null !== $resultRouteFn && $resource_found === false,
-        function() use ($resultRouteFn, &$resource_found)
-        {
-            $resource_found = true;
-            return $resultRouteFn;
-        }
+    printFunction(
+        iffn(
+            fn()=> null !== $resultRouteFn && $resource_found === false,
+            function() use ($resultRouteFn, &$resource_found)
+            {
+                $resource_found = true;
+                return $resultRouteFn;
+            }
+        )
     );
     //printFunction($view_or_resource_not_found);
     #var_dump($routeFn($route, $controller));
